@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ 	  
+   <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+   <script src="jquery-ui-1.11.0/external/jquery/jquery.js"></script>
+    <script src="jquery-ui-1.11.0/jquery-ui.min.js"></script>
+   <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <link rel="stylesheet" href="jquery-ui-1.11.0/jquery-ui.css" />
+   <link rel="stylesheet" href="jquery-ui-1.11.0/jquery-ui.structure.css" />
+   <link rel="stylesheet" href="jquery-ui-1.11.0/jquery-ui.theme.css" />
+   <link rel="stylesheet" href="mobile.css" />
+   <link rel="stylesheet" href="dist/MarkerCluster.css" />
+	<link rel="stylesheet" href="dist/MarkerCluster.Default.css" />
+	<link rel="stylesheet" href="community.css" />
+	<link rel="stylesheet" href="clusterpie.css" />
+	<script src="dist/leaflet.markercluster-src.js"></script>
+	<script src="http://maps.google.com/maps/api/js?v=3&sensor=false"></script>
+	<script src="layer/tile/Google.js"></script>
+	<script src="wb.js"></script>
+	<script src="filter.js"></script>
+	<!-- // <script src="html5slider.js"></script> -->
+ </head>
+<style type="text/css">
+    </style>
+  </head>
+  <body>
+
+   
+  <!--  <div id="sdiv"><h4>Toilet Types</h4><label id="myLabel">12</label><p><input id="slide" name="slider" type="range" min="1" max="12" step="1" value="12" onchange="updateSlider(this.value)"/></p></div> -->
+   <div id="map"></div>
+   <!-- <div id="controlpanel" class='draggable ui-corner-all ui-widget-content uipanel'>
+  <h4>Filters</h4>
+<select id="1">
+	<option value="All">All</option>
+	<option value="Primary">Primary</option>
+	<option value="Non-Primary">Non-Primary</option>
+	
+</select>
+<select id="2">
+	<option value="All">All</option>
+	<option value="Boys">Boys</option>
+	<option value="Girls">Girls</option>
+	<option value="Co-education">Co-education</option>
+	
+</select>
+<select id="3">
+	<option value=""></option>
+	<option value="Attendance">Attendance</option>
+	<option value="Adequacy of teacher">Adequacy of teacher</option>
+	<option value="Adequacy and sustainability of WASH infrastructure">Adequacy and sustainability of WASH infrastructure</option>
+	<option value="School Management">School Management</option>
+</select>
+<select id="4"></select>
+<!-- <select id="5">
+	
+	<option value="Yes">Yes</option>
+	<option value="No">No</option>
+	<option value="All">All</option>
+</select> -->
+<!--<input id="Go" type="button" value="Go" ></input>
+</div> -->
+<div id='controlpanel' class='draggable ui-corner-all ui-widget-content uipanel'>
+			<h3>Data Chooser</h3>
+			<div id='controlpanelcontent'>
+				<div id='schoolCode'>
+					<label for="code">School Code</label>
+					<input type='text' id='code' size=15 class="textbox"></input>
+					<input id="Search" type="button" value="Go to School" ></input>	
+				</div>
+				
+				<div id='topiclist' class='controlpaneloption'>1.<div id='topicbuttons'></div>
+				</div>
+				<div id='tablelist' class='controlpaneloption'>2.
+				<label for="1">Category</label>
+				<select id="1">
+					<option value="All">All</option>
+					<option value="Primary">Primary</option>
+					<option value="Non-Primary">Non-Primary</option>
+				</select>
+				<label for="2">Type</label>
+				<select id="2">
+					<option value="All">All</option>
+					<option value="Boys">Boys</option>
+					<option value="Girls">Girls</option>
+					<option value="Co-education">Co-education</option>
+				</select>
+					
+				</div>
+				<div id='tablelist' class='controlpaneloption'>3.
+					<select id='4' class='ui-widget select'></select>
+					<input id="Go" type="button" value="Search" ></input>
+				</div>
+				<!-- <div id='tablequal' class='qual'>&nbsp;</div>
+				<div id='collist' class='controlpaneloption'>3
+					<select id='colselect' onchange='setSubCols()'></select>
+				</div>
+				<div id='subcollist' class='controlpaneloption'>4
+					<select id='subcolselect' onchange='setColQualAndTileNames()'></select>
+				</div> -->
+				<div id='colqual' class='qual'>&nbsp;</div>
+			</div>
+		</div>
+		<div id='infopanel' class="draggable ui-corner-all ui-widget-content uipanel">
+			<h3>Key</h3>
+			<div id='infopanelcontent'>
+				<div id='colpanel'>
+				</div>
+				
+				<div id='keypanel'>
+					<div id='keylqs'>
+					</div>
+					<div id='keyitems'>
+					</div>
+					<div id='keynumbers'>
+					</div>
+				</div>
+				<div id='placepanel'>
+				</div>
+				<div style='clear: both; '></div>
+			</div>
+		</div>
+       <script src="lib/d3.v3.min.js" charset="utf-8"></script>
+      <script type="text/javascript">
+ 
+d3.csv("data.csv",function(data){
+var origData=data;
+var gjLayer;
+var currentIndicator="";
+var legendAdded=false;
+var rmax=30;
+var map = L.map('map',{zoomControl: false }).setView([24.729284, 87.982334], 7);
+
+var osm = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+var ggl = new L.Google();
+var ggl2 = new L.Google('TERRAIN');
+	map.addLayer(ggl2);
+	var baseMaps={'OSM':osm, 'Satellite':ggl, 'Google Terrain':ggl2};
+	// map.addControl(new L.Control.Layers( baseMaps, {}));
+	gjLayer=L.geoJson(geojson,{style:style,onEachFeature:onEachFeature});
+	// gjLayer.addTo(map);
+	new L.control.zoom({position:'bottomright'}).addTo(map);
+ 	map.on('zoomend',update);
+ 	$("#controlpanel").accordion({ collapsible: true, heightStyle: "content"}).draggable({ snap: true, snapTolerance: 6, scroll: false, distance: 10, cursorAt: { top: 30, left: 290 } });
+ 	$("#infopanel").accordion({ collapsible: true, heightStyle: "content"}).draggable({ snap: true, snapTolerance: 6, scroll: false, cursorAt: { top: 30, left: 105 } });
+ 	var areas=getAreas();
+ 	createRadioButtons(areas);
+ 	
+
+function createRadioButtons(areas){
+	var html=""
+	$.each(areas,function(i,value){
+    		html += '<input type="radio" id="radio' + value + '" name="radio"><label for="radio' + value + '">' + value + "</label>";
+  
+		});
+	$( "#topicbuttons" ).buttonset()
+	$("#topicbuttons").append(html);
+
+}
+$( "#topicbuttons" ).buttonset('refresh').find(':radio').click( function() 
+	{  
+		populateCombo($(this).attr("id").substring(5),"#4");
+	});
+// Removes/adds the organge highlight
+ function update(){
+ 	var zoom=map.getZoom();
+ 	if(zoom>=11){
+ 		map.removeLayer(gjLayer);
+ 	}else if(!map.hasLayer(gjLayer)){
+ 		gjLayer.addTo(map);
+ 	}
+
+ }
+
+function getAreas(){
+	var map3={};
+ 		
+ 	for(var j=0;j<filterStruct.length;j++){
+ 		var name3=filterStruct[j].Area;
+ 		if(!(name3 in map3)){
+ 			map3[name3]=name3;
+ 		}
+ 	};
+ 	return map3;
+
+
+}
+
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: zoomToFeature
+    });
+}
+function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+        weight: 1,
+        color: 'red',
+        dashArray: ''
+        // fillOpacity: 0.7
+    });
+
+    if (!L.Browser.ie && !L.Browser.opera) {
+        layer.bringToFront();
+    }
+    info.update(layer.feature.properties);
+}
+function resetHighlight(e) {
+    gjLayer.resetStyle(e.target);
+    info.update();
+}
+function zoomToFeature(e) {
+    map.fitBounds(e.target.getBounds());
+}
+var info = L.control();
+
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+// method that we will use to update the control based on feature properties passed
+info.update = function (props) {
+    this._div.innerHTML = '<h4>TALUK</h4>' +  (props ?'<b>' + props.NAME_3 + '</b><br />': 'Hover over a taluk');
+};
+
+// info.addTo(map);
+function style(feature) {
+    return {
+        fillColor: '#ef9400',
+        weight: 2,
+        opacity: .5,
+        color: 'brown',
+        dashArray: '2',
+        fillOpacity: 0.001
+    };
+}
+
+var markers = L.markerClusterGroup({spiderfyOnMaxZoom: true, showCoverageOnHover: true, zoomToBoundsOnClick: true});
+				var markerList = [];
+
+		var markerIcon= L.Icon.extend({
+			options:{
+    							
+    							iconSize:     [32, 48] ,// size of the icon
+							    shadowSize:   [41, 41], // size of the shadow
+							    popupAnchor:  [-3, -15] // point from which the popup should open relative to the iconAnchor
+}
+});
+
+var greenIcon=new markerIcon({iconUrl:"green.png"});
+var redIcon=new markerIcon({iconUrl:"red.png"});
+var brownIcon=new markerIcon({iconUrl:"brown.png"});
+var blueIcon=new markerIcon({iconUrl:"blue.png"});
+var yellowIcon=new markerIcon({iconUrl:"yellow.png"});
+var emeraldIcon=new markerIcon({iconUrl:"emerald.png"});
+var orangeIcon=new markerIcon({iconUrl:"orange.png"});
+
+
+// function getIcon(type){
+// if(type=="PSF/RWHS"){
+// 	return greenIcon;
+// }else if(type=="Unprotected"){
+// 	return redIcon;
+// }else if(type=="Pipe water Supply"){
+// 	return blueIcon;
+// }else if(type=="Purchased Water"){
+// 	return yellowIcon;
+// }else if(type=="Deep Tube Well/DSP"){
+// 	return brownIcon;
+// }else if(type=="Shallow Tube Well"){
+// 	return emeraldIcon;
+// }else if(type=="Ring Well/Dug well"){
+// 	return orangeIcon;
+// }
+
+
+// }
+
+		function populate(val1,val2,val3,val4,val5) {
+			var data;
+			if(val1==null && val2==null && val3==null && val4==null && val5==null){
+				data=origData;
+				createAndPushMarkers(data);
+			}else if(val5==null){
+				data=filterType(val1,origData);
+				data=filterCategory(val2,data);
+				data=filterNA(data);
+				createAndPushMarkers(data,val4,val5)
+			}else if(val5!=null){
+				data=filterType(val1,origData);
+				data=filterCategory(val2,data);
+				data=filterNA(data);
+				data=filterOnSelection(val5,data);
+				createAndPushMarkers(data,val4,val5);
+
+			}
+			
+			
+		
+			map.addLayer(markers);
+			if(markers.toGeoJSON().features.length==0){
+				alert("No matches found for this filter");
+			}
+
+		}
+
+		populate();
+		function createAndPushMarkers(data,val4,val5){
+			
+			for(var j=0;j<data.length;j++){
+			var marker=L.marker(L.latLng(data[j].Lat, data[j].Long), { alt:data[j][currentIndicator],icon: getIcon(data[j],val4,val5)});
+			marker.bindPopup('<div style="padding:0px;font-size:12px;"><table border="0" cellpadding="1" cellspacing="0" style="width: 300px;border-style:outset;border-color:#000000;"><tbody><tr><td><p><b>School :</b>'+data[j].School+'</p><p><b>School Code :</b>'+data[j].School_Code+'</p><p><b>Type :</b>'+ data[j].Type +'</p><p><b>Category :</b>'+data[j].Category+'</p></td></tr></tbody></table></div>');
+
+						markers.addLayer(marker);
+				markerList.push(marker);
+
+			}
+
+		}
+
+		function getIcon(data,val4,val5){
+			if(val4==null){
+				return blueIcon;
+			}else if (val4!=null){
+				var key=data[currentIndicator];
+				var attributes=getLegendAttributes(currentIndicator);
+				var iconAttributes=getIconAttributes(currentIndicator);
+				var iconPNG=iconAttributes[attributes.indexOf(key)];
+				return new markerIcon({iconUrl:iconPNG});
+
+			}
+
+
+		}
+		function filterNA(data){
+			var modData=[];
+			for(var i=0;i<data.length;i++){
+					if(data[i][currentIndicator]!="NA"){
+						modData.push(data[i]);
+					}
+				}
+				return modData;
+
+		}
+		function filterOnSelection(val5,data){
+
+			var modData=[];
+			for(var i=0;i<data.length;i++){
+					if(val5==data[i][currentIndicator]){
+						modData.push(data[i]);
+
+					}else if(val5=="All"){
+						modData=data;
+						break;
+				}
+		}
+		return modData;
+	}
+
+// function addMarkers(data,icon,column,boolean){
+// 				var marker;
+// 				var markers = L.markerClusterGroup({spiderfyOnMaxZoom: true, showCoverageOnHover: true, zoomToBoundsOnClick: true,maxClusterRadius:50,iconCreateFunction:defineClusterIcon});
+// 				var markerList = [];
+
+// 				for (var i = 0; i < data.length; i++) {
+// 					if(column!=null  && data[i][column]==boolean){
+// 						marker = createMarker(data[i],icon);
+// 						markers.addLayer(marker);
+// 						markerList.push(marker);
+// 					}
+// 					if(column==null){
+// 						 marker = createMarker(data[i],icon);
+// 						 markers.addLayer(marker);
+// 						markerList.push(marker);
+// 					}
+				
+				 
+				
+				
+// 			}
+// 			return markers;
+
+
+// }	
+
+// function createMarker(dataElement,icon){
+
+	
+				
+// 				return marker;
+// }	
+
+function filterType(val1,data){
+
+var modData=[];
+for(var i=0;i<data.length;i++){
+	if(val1==data[i].Type){
+		modData.push(data[i]);
+
+	}else if(val1=="All"){
+		modData=data;
+		break;
+	}
+
+
+}
+return modData;
+
+}		
+function filterCategory(val2,data){
+
+var modData=[];
+for(var i=0;i<data.length;i++){
+	if(val2==data[i].Category){
+		modData.push(data[i]);
+
+	}else if(val2=="All"){
+		modData=data;
+		break;
+	}
+
+
+}
+return modData;
+
+}	
+	
+
+function filter(d,users){
+	var modData=[];
+	for(var i=0;i<=d.length;i++){
+		if (d[i] !=undefined){
+			if(users=="5" && parseInt(d[i].Users)<=5){
+					modData.push(d[i]);
+			}else if(users=="10" && parseInt(d[i].Users)>5 && parseInt(d[i].Users)<=10){
+					modData.push(d[i]);
+			}else if(users=="10+" && parseInt(d[i].Users)>10){
+					modData.push(d[i]);
+			}else if(users=="All" && (d[i].Users)!=null){
+					modData=d;
+					break;
+			}else if(users=="Blanks" && (d[i].Users)==""){
+					modData.push(d[i]);
+		
+			}
+
+
+		}
+
+    }
+
+return modData;
+}
+function filterSource(d,type){
+	var modData=[];
+	for(var i=0;i<=d.length;i++){
+		if (d[i] !=undefined){
+			if(d[i].Type==type){
+					modData.push(d[i]);
+			}else if(type=="All" && (d[i].Type)!=null){
+					modData=d;
+					break;
+			}
+
+		}
+
+    }
+
+return modData;
+}
+function filterYear(d,year){
+	var modData=[];
+	for(var i=0;i<=d.length;i++){
+		if (d[i] !=undefined){
+			if(d[i].Year==year){
+					modData.push(d[i]);
+			}else if(year=="2012"){
+				modData=d;
+				break;
+			}
+
+		}
+
+    }
+
+return modData;
+}
+
+var legend = L.control({position: 'bottomleft'});
+
+legend.onAdd = function (map) {
+	var attributes=getLegendAttributes(currentIndicator);
+	var iconAttributes=getIconAttributes(currentIndicator);
+    var div = L.DomUtil.create('div', 'infoLegend');
+    div.innerHTML=getLegendHTML(attributes,iconAttributes);/*'<h4>Toilet Users</h4><p><input name="RD1" type="radio" id="filter" value="5">0-5</p><p><input name="RD1"type="radio" id="filter" value="10"/>6-10</p><p><input name="RD1"type="radio" id="filter" value="10+"/>10+</p><p><input name="RD1"type="radio" id="filter" value="All"/>All</p><p><input name="RD1"type="radio" id="filter" value="Blanks"/>Blanks</p>';*/
+   legendAdded=true;
+   
+    return div;
+};
+function getLegendHTML(attributes,iconAttributes){
+	if(attributes==""){
+		return "";
+	}else{
+		var htmlStr='';
+		for(var j=0;j<attributes.length;j++){
+			htmlStr=htmlStr+'<p><img src='+iconAttributes[j]+'/><input name="RD1" type="radio" id="filter"  value="'+attributes[j]+'"/>'+attributes[j]+'</p>'
+
+		}
+		return htmlStr;
+
+	}
+
+}
+
+function getLegendAttributes(currentIndicator){
+	if(currentIndicator==""){
+		return "";
+	}else{
+		var attributes=[];
+	for(var j=0;j<filterStruct.length;j++){
+ 		var name2=filterStruct[j].Indicator;
+ 		// var legend= filterStruct[j].Legend;
+ 		if(name2==currentIndicator){
+ 			attributes=filterStruct[j].Legend.split("/");
+ 			return attributes;
+ 		}
+
+
+
+}
+}
+}
+function getIconAttributes(currentIndicator){
+	if(currentIndicator==""){
+		return "";
+	}else{
+		var attributes=[];
+	for(var j=0;j<filterStruct.length;j++){
+ 		var name2=filterStruct[j].Indicator;
+ 		// var legend= filterStruct[j].Legend;
+ 		if(name2==currentIndicator){
+ 			attributes=filterStruct[j].Icon.split("/");
+ 			return attributes;
+ 		}
+
+
+
+}
+}
+}
+$('body').on('change','input:radio[name=RD1]',function(e){
+		var value=e.currentTarget.attributes[1].value;
+		map.removeLayer(markers);
+		markers=L.markerClusterGroup({spiderfyOnMaxZoom: true, showCoverageOnHover: true, zoomToBoundsOnClick: true,maxClusterRadius:50,iconCreateFunction:defineClusterIcon});
+		populate($("#1").val(),$("#2").val(),$("#3").val(),$("#4").val(),value);
+		}
+);
+
+$("#Go").click(function(e){
+if($("#4").val()==null){
+	alert("Please select indicator");
+	return;
+}
+
+	if(legendAdded){
+	legend.removeFrom(map);
+}
+	map.removeLayer(markers);
+	markers=L.markerClusterGroup({spiderfyOnMaxZoom: true, showCoverageOnHover: true, zoomToBoundsOnClick: true,maxClusterRadius:50,iconCreateFunction:defineClusterIcon});
+var v1=$("#1").val();
+var v2=$("#2").val();
+var v3=$("#3").val();
+var v4=$("#4").val();
+var v5=$("#5").val();
+currentIndicator=v4;
+$("#colpanel").empty();
+var attributes=getLegendAttributes(currentIndicator);
+	var iconAttributes=getIconAttributes(currentIndicator);
+    $("#colpanel").append(getLegendHTML(attributes,iconAttributes));
+
+populate(v1,v2,v3,v4,v5);
+// renderLegend(v4);
+
+
+
+})
+
+
+ function getIndicators(value){
+ 		var map3={};
+ 		if(value==""){
+ 			return map3;
+ 		}
+ 		map3[0]="";
+ 	for(var j=0;j<filterStruct.length;j++){
+ 		var name3=filterStruct[j].Area;
+ 		var name2=filterStruct[j].Indicator;
+ 		var legend= filterStruct[j].Legend;
+ 		if(name3==value && !(name2 in map3)){
+ 			map3[name2]=name2;
+ 		}
+ 	};
+ 	return map3;
+ }
+ 
+$("#3").change(function () {
+	var selected = $(this).val();
+    var options="";
+    if(selected==""){
+    	$("#4").empty();
+    }else{
+    $.each(getIndicators(selected),function(i,value){
+    		options += '<option value="' + value + '">' + value + '</option>';
+    	$("#4").html(options);
+
+  
+});
+
+}
+
+
+
+
+});
+ function populateCombo(selectedValue,target){
+var options="";
+    if(selectedValue==""){
+    	$(target).empty();
+    }else{
+    $.each(getIndicators(selectedValue),function(i,value){
+    		options += '<option value="' + value + '">' + value + '</option>';
+    	$(target).html(options);
+
+});
+
+}
+
+
+
+
+}
+
+function defineClusterIcon(cluster){
+    // console.log(cluster);
+	var children = cluster.getAllChildMarkers(),
+        n = children.length, //Get number of markers in cluster
+        strokeWidth = 1, //Set clusterpie stroke width
+        r = rmax-2*strokeWidth-(n<10?12:n<100?8:n<1000?4:0), //Calculate clusterpie radius...
+        iconDim = (r+strokeWidth)*2, //...and divIcon dimensions (leaflet really want to know the size)
+        data = d3.nest() //Build a dataset for the pie chart
+          .key(function(d) {
+          	return d.options.alt; 
+          }).entries(children, d3.map),
+        //bake some svg markup
+        html = bakeThePie({data: data,
+                            valueFunc: function(d){return d.values.length;},
+                            strokeWidth: 1,
+                            outerRadius: r,
+                            innerRadius: r-10,
+                            pieClass: 'cluster-pie',
+                            pieLabel: n,
+                            pieLabelClass: 'marker-cluster-pie-label',
+                            pathClassFunc: function(d)
+                            {var value=d.data.key;
+                            	if(value=="Yes"){
+                            		return 'category-3';
+                            	}
+                                var attributes=getLegendAttributes(currentIndicator);
+                                return "category-"+attributes.indexOf(value);
+
+                            },
+                            pathTitleFunc: function(d){return d.data.key+' ('+d.data.values.length+')';}
+                          }),
+        //Create a new divIcon and assign the svg markup to the html property
+        myIcon = new L.DivIcon({
+            html: html,
+            className: 'marker-cluster', 
+            iconSize: new L.Point(iconDim, iconDim)
+        });
+    return myIcon;
+
+
+
+}
+
+function bakeThePie(options) {
+    /*data and valueFunc are required*/
+    if (!options.data || !options.valueFunc) {
+        return '';
+    }
+    var data = options.data,
+        valueFunc = options.valueFunc,
+        r = options.outerRadius?options.outerRadius:28, //Default outer radius = 28px
+        rInner = options.innerRadius?options.innerRadius:r-10, //Default inner radius = r-10
+        strokeWidth = options.strokeWidth?options.strokeWidth:1, //Default stroke is 1
+        pathClassFunc = options.pathClassFunc?options.pathClassFunc:function(){return '';}, //Class for each path
+        pathTitleFunc = options.pathTitleFunc?options.pathTitleFunc:function(){return '';}, //Title for each path
+        pieClass = options.pieClass?options.pieClass:'marker-cluster-pie', //Class for the whole pie
+        pieLabel = options.pieLabel?options.pieLabel:d3.sum(data,valueFunc), //Label for the whole pie
+        pieLabelClass = options.pieLabelClass?options.pieLabelClass:'marker-cluster-pie-label',//Class for the pie label
+        
+        origo = (r+strokeWidth), //Center coordinate
+        w = origo*2, //width and height of the svg element
+        h = w,
+        donut = d3.layout.pie(),
+        arc = d3.svg.arc().innerRadius(rInner).outerRadius(r);
+        
+    //Create an svg element
+    var svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
+    //Create the pie chart
+    var vis = d3.select(svg)
+        .data([data])
+        .attr('class', pieClass)
+        .attr('width', w)
+        .attr('height', h);
+        
+    var arcs = vis.selectAll('g.arc')
+        .data(donut.value(valueFunc))
+        .enter().append('svg:g')
+        .attr('class', 'arc')
+        .attr('transform', 'translate(' + origo + ',' + origo + ')');
+    
+    arcs.append('svg:path')
+        .attr('class', pathClassFunc)
+        .attr('stroke-width', strokeWidth)
+        .attr('d', arc)
+        .append('svg:title')
+          .text(pathTitleFunc);
+                
+    vis.append('text')
+        .attr('x',origo)
+        .attr('y',origo)
+        .attr('class', pieLabelClass)
+        .attr('text-anchor', 'middle')
+        //.attr('dominant-baseline', 'central')
+        /*IE doesn't seem to support dominant-baseline, but setting dy to .3em does the trick*/
+        .attr('dy','.3em')
+        .text(pieLabel);
+    //Return the svg-markup rather than the actual element
+    return serializeXmlNode(svg);
+}
+function serializeXmlNode(xmlNode) {
+    if (typeof window.XMLSerializer != "undefined") {
+        return (new window.XMLSerializer()).serializeToString(xmlNode);
+    } else if (typeof xmlNode.xml != "undefined") {
+        return xmlNode.xml;
+    }
+    return "";
+}
+
+});
+ 	</script>
+ 
+ </body>
+</html>

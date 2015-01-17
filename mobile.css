@@ -1,0 +1,547 @@
+html, body, #map {
+	margin: 0;
+	bottom: 0;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+#controlpanel {
+	right: 10px;
+	top: 10px;
+	width: 580px;
+	position: absolute;
+	border-radius: 10px;
+	opacity: 0.85;
+	background-color: #ffffff;
+
+	
+}
+#controlpanelcontent
+{
+	padding: 10px 0 10px 10px;
+	font-family: 'Cabin Condensed', sans-serif;
+
+}
+
+.controlpaneloption
+{
+	padding: 5px 0 0 0;	
+	white-space: nowrap;
+}
+h3
+{
+	text-align: center; 
+	font-size: 14px;
+	text-transform: uppercase; 
+	margin-top: 0 !IMPORTANT;
+	border-top-left-radius: 4px !IMPORTANT;
+	border-top-right-radius: 4px !IMPORTANT;
+	padding: 3px !IMPORTANT;
+	border-width: 5px;
+}
+.uipanel
+{
+	border: 5px solid #08c !IMPORTANT;
+}
+
+#mappanel
+{
+ 	position: absolute; 
+ 	left: 0; 
+ 	top: 0; 
+ 	right: 0; 
+ 	bottom: 0; 
+ 	height: 100%;
+}
+
+#mapcontainer
+{
+	background-color: #dddddd;
+ 	position: absolute; 
+ 	width: 100%; 
+ 	height: 100%;
+ 	margin-left: auto; margin-right: auto; 
+}
+
+.uipanel
+{
+	border: 5px solid #08c !IMPORTANT;
+}
+
+#titlepanel, #debugpanel, #infopanel, #controlpanel
+{
+	position: absolute;
+	border-radius: 10px;
+	opacity: 0.85;
+	background-color: #ffffff;
+}
+
+#titlepanel
+{
+	top: 0;
+	left: 10px;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	border-width: 0 5px 5px 5px;
+	border-color: black;
+	height: 180px;
+}
+.markerPopup{
+font-family: 'Cabin Condensed', sans-serif;
+}
+.linktext{
+
+}
+.leaflet-container {
+    
+}
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+    background: none repeat scroll 0 0 wheat; !important
+    
+}
+#debugpanel
+{
+	display: none;
+	bottom: 30px;
+	height: 100px;
+	width: 950px;
+	right: 10px;
+}
+
+#debugpanel table
+{
+	padding: 10px 15px;
+}
+
+#controlpanel
+{	
+	min-width: 200px;
+	right: 10px;
+	top: 10px;
+	width: auto;
+}
+
+#controlpanelcontent
+{
+	padding: 10px 0 10px 10px;
+	font-family: 'Cabin Condensed', sans-serif;
+
+}
+
+.controlpaneloption
+{
+	padding: 5px 0 0 0;	
+	white-space: nowrap;
+}
+
+
+#infopanel
+{	
+	min-width: 100px;
+	top: 300px;
+  	left: 10px;
+  	width: auto;
+	/* border-bottom-left-radius: 5px; */
+}
+
+#infopanelcontent
+{
+	padding: 0;
+	font-family: 'Cabin Condensed', sans-serif;
+}
+
+#colpanel
+{
+	padding: 10px 15px;
+}
+
+#lockpanel
+{
+	clear: both;
+	text-align: center;
+}
+
+#lockpanel button
+{
+	font-size: 8px;
+}
+
+#keypanel
+{
+	clear: both;
+}
+
+#placepanel
+{
+	clear: both;
+}
+
+
+#metapanel
+{
+	position: absolute;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	opacity: 0.85;
+	background-color: #ffffff;
+	padding: 5px 10px;
+	bottom: 0;
+	font-size: 11px;
+	width: 780px;
+	left: 50%;
+	margin-left: -390px;
+	border-top: 5px solid #000 !IMPORTANT;
+	border-left: 5px solid #000 !IMPORTANT;
+	border-right: 5px solid #000 !IMPORTANT;
+
+}
+
+#topiclist, #tablelist, #collist, #subcollist, #subsubcollist
+{
+
+}
+
+#topiclist
+{
+	padding-bottom: 5px;
+}
+
+#subcollist, #subsubcollist
+{
+	display: none;
+}
+
+#topicbuttons
+{
+	display: inline;
+	padding-left: 7px;
+	font-size: 15px;
+}
+#dialogList
+{
+	display: inline;
+	padding-left: 7px;
+	font-size: 12px;
+}
+#questions {
+    font-size: 15px;
+    padding: 1em 0.5em;
+}
+
+#metapanelcontent
+{
+	text-align: center;
+	white-space: nowrap;
+	-webkit-text-size-adjust: 100%;
+}
+
+#metapanelcontent td
+{
+	border-radius: 5px;
+	padding: 5px 8px;
+}
+
+#headline
+{
+	color: black;
+	background-color: black;
+	border-bottom-left-radius: 5px;
+	border-top-right-radius: 5px;
+	text-align: center;
+	padding: 10px;
+	width: 100px;
+}
+
+#title
+{
+	padding: 0 15px;
+	font-size: 20px;
+}
+
+#subtitle
+{
+	padding: 0 15px 0 15px;
+	font-size: 16px;
+
+}
+
+#cityjump button, #postcodeButton, #metapanel button
+{
+	font-size: 9px;
+}
+
+.supplementary
+{
+	padding: 3px 15px 10px 15px;
+	font-size: 9px;
+}
+
+#keyitems
+{
+	margin-top: 12px; 
+	float: left;
+}
+
+.keyitem
+{
+	width: 60px; 
+	height: 24px; 
+	line-height: 24px;
+	vertical-align: middle;
+	font-size: 17px;
+	text-align: center;
+}
+
+#keylqs, #keynumbers
+{
+	width: 55px; 
+	margin: 0 5px;
+	float: left;
+	font-size: 11px;
+}
+
+#postcodesearch
+{
+	padding: 0 10px 0 0;
+	white-space: nowrap;
+}
+
+#postcodeButton
+{
+	margin-bottom: 2px;
+}
+
+#keylqs
+{
+	text-align: right;
+}
+
+#keynumbers
+{
+	text-align: left;
+}
+
+.keynumber
+{
+	width: 55px; 
+	height: 24px; 
+	line-height: 24px; 
+	vertical-align: middle; 
+}
+
+#headlinetitle
+{
+	font-size: 14px;
+}
+
+#headlinefigure
+{
+}
+
+#submetrics
+{
+	clear: both;
+	padding: 5px 10px 10px 10px;
+}
+
+.submetric
+{
+	float: left;
+	color: black;
+	background-color: black;
+	border-bottom-left-radius: 5px;
+	border-top-right-radius: 5px;
+	text-align: center;
+	padding: 5px;
+	width: 60px;
+	margin: 5px;
+}
+
+.submetrictitle
+{
+	font-size: 10px;
+}
+
+.submetricfigure
+{
+	font-size: 18px;
+}
+
+h3
+{
+	text-align: center; 
+	font-size: 14px;
+	text-transform: uppercase; 
+	margin-top: 0 !IMPORTANT;
+	border-top-left-radius: 4px !IMPORTANT;
+	border-top-right-radius: 4px !IMPORTANT;
+	padding: 3px !IMPORTANT;
+	border-width: 5px;
+}
+
+.paneltitleside
+{
+	transform: rotate(270deg);
+	-webkit-transform: rotate(270deg);
+	-moz-transform: rotate(270deg);
+	-ms-transform: rotate(270deg);
+	transform-origin: left bottom 0;
+	-webkit-transform-origin: left bottom 0;
+	-moz-transform-origin: left bottom 0;
+	-ms-transform-origin: left bottom 0;
+	float: left; 
+	vertical-align: center; 
+	background-color: #08c; 
+	color: white;
+	font-size: 14px;
+	padding: 1px 5px;
+	margin-top: 100px;
+	text-transform: uppercase; 
+}
+
+#toptitle
+{
+	left: 0;
+	right: 0; 
+	text-align: center; 
+	vertical-align: center;
+	background-color: black; 
+	font-size: 28px; 
+	color: white;
+	padding: 0 10px;
+}
+
+#toptitle img
+{
+ 	width: 23px; 
+ 	height: 22px; 
+ 	padding: 5px 0 0 5px; 
+ 	float: left;
+}
+
+#social
+{
+	text-align: center; 
+	margin-top: 5px;
+}
+
+#social table
+{
+	margin: 0 auto;
+}
+
+#twitter-widget-0
+{
+	background: None !IMPORTANT;
+ 	border: None !IMPORTANT;
+}
+
+.qual
+{
+	color: red;
+   	font-size: 10px;
+    font-style: italic;
+    font-weight: bold;
+    padding-left: 15px;
+}
+
+.olImageLoadError {
+	display: none;
+	background-image: url('/images/notile.png');
+    	background-repeat: no-repeat;
+}
+
+.olControlZoom
+{
+	top: auto !IMPORTANT;
+	left: auto !IMPORTANT;
+	bottom: 10px;
+	right: 10px;
+	position: absolute;
+}
+
+.olControlScaleLine
+{
+	left: auto !IMPORTANT;
+	bottom: 10px !IMPORTANT;
+	right: 50px;
+	position: absolute;
+
+}
+
+.olControlScaleLine div
+{
+	font-size: 12px;
+}
+
+.olControlZoom a
+{
+	background-color: #000 !IMPORTANT;
+}
+.textbox{
+	width: 150px;
+	border: 1px solid orange;
+
+}
+
+.datagrid table { 
+border-collapse: collapse; text-align: left; width: 100%; 
+}
+ .datagrid {
+ font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; 
+ overflow: hidden; 
+ border: 3px solid #006699; 
+ -webkit-border-radius: 3px; 
+ -moz-border-radius: 3px; 
+ border-radius: 3px; 
+ }
+ .datagrid table td, .datagrid table th {
+  padding: 2px 10px; 
+  }
+  .datagrid table thead th {
+  	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006699), color-stop(1, #00557F) );
+  	background:-moz-linear-gradient( center top, #006699 5%, #00557F 100% );
+  	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#006699', endColorstr='#00557F');
+  	background-color:#006699;
+  	color:#FFFFFF;
+  	font-size: 15px;
+  	font-weight: bold;
+  	}
+
+  .datagrid table thead th:first-child {
+   border: none; 
+   }
+   .datagrid table tbody td { 
+   color: #275420; font-size: 12px;font-weight: normal; 
+   }
+   .datagrid table tbody .alt td {
+    background: #DFFFDE; color: #275420; 
+  }
+    .datagrid table tbody td:first-child { 
+    border-left: none;
+  }
+
+  .datagrid table tbody tr:last-child td { 
+  border-bottom: none; 
+  }
+
+  .datagrid table tbody .alt1 td {
+
+ background: #F7CDCD;
+  color: #80141C; 
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+
+
+.x.axis path {
+  display: none;
+}
